@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股主线选股 · 2026-11-11</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --ink:#16202c; --sub:#5b6b7c; --line:#e3e7ec;
+    --up:#c62828; --down:#0f8a5f; --accent:#1e3a5f; --amber:#b45309; --teal:#0f766e;
+    --gold:#8a6d3b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 28px 72px;}
+  header{margin-bottom:34px;}
+  .kicker{font-size:12px;letter-spacing:.18em;color:var(--sub);text-transform:uppercase;margin-bottom:10px;}
+  h1{font-size:30px;font-weight:700;letter-spacing:-.5px;}
+  h1 span{color:var(--accent);}
+  .meta{margin-top:10px;font-size:13px;color:var(--sub);}
+  .meta b{color:var(--ink);font-weight:600;}
+  .rule-line{height:3px;width:54px;background:var(--accent);margin:18px 0 0;border-radius:2px;}
+
+  h2{font-size:18px;margin:44px 0 6px;display:flex;align-items:center;gap:10px;}
+  h2 .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;
+    font-size:13px;font-weight:600;flex:none;
+  }
+  .lead{color:var(--sub);font-size:14px;margin-bottom:16px;}
+
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 8px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+  .card .lbl{font-size:12px;color:var(--sub);margin-bottom:6px;}
+  .card .val{font-size:22px;font-weight:700;letter-spacing:-.3px;}
+  .card .val.up{color:var(--up);} .card .val.down{color:var(--down);}
+  .card .note{font-size:12px;color:var(--sub);margin-top:4px;}
+
+  .verdict{
+    background:linear-gradient(180deg,#fff,#fbfcfd);border:1px solid var(--line);
+    border-left:4px solid var(--up);border-radius:12px;padding:18px 22px;margin:16px 0;
+  }
+  .verdict p{font-size:15px;}
+  .verdict p+p{margin-top:8px;}
+  .verdict b{color:var(--up);}
+
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;font-size:13.5px;}
+  thead th{
+    background:#f0f3f6;color:var(--sub);font-weight:600;font-size:12px;text-align:left;
+    padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  tbody td{padding:11px 12px;border-bottom:1px solid #eef1f4;vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#fafbfc;}
+  .mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+  .up{color:var(--up);} .down{color:var(--down);} .mut{color:var(--sub);}
+  .name{font-weight:600;}
+  .code{font-size:11.5px;color:var(--sub);margin-left:4px;font-weight:400;}
+
+  .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .tag.ok{background:#e6f4f1;color:var(--teal);}
+  .tag.no{background:#fdecec;color:#b3261e;}
+  .tag.mid{background:#fdf3e3;color:var(--amber);}
+  .tag.buy{background:#fdecec;color:var(--up);}
+  .tag.wait{background:#eef2f7;color:var(--accent);}
+
+  .matrix td:first-child{font-weight:600;}
+  .bar-cell{min-width:120px;}
+  .bar{position:relative;height:6px;background:#eef1f4;border-radius:4px;overflow:hidden;}
+  .bar i{position:absolute;top:0;bottom:0;border-radius:4px;}
+
+  .stock-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  .stock{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;position:relative;}
+  .stock.top{border-top:3px solid var(--up);}
+  .stock .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .stock h3{font-size:17px;font-weight:700;}
+  .stock h3 em{font-style:normal;font-size:12px;color:var(--sub);font-weight:400;margin-left:6px;}
+  .score{text-align:right;flex:none;}
+  .score b{font-size:22px;color:var(--up);font-variant-numeric:tabular-nums;}
+  .score span{font-size:11px;color:var(--sub);}
+  .stock .why{font-size:13px;color:var(--sub);margin:10px 0 12px;padding-left:0;}
+  .kv{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 14px;margin:14px 0 4px;
+      padding:12px 0 2px;border-top:1px solid #eef1f4;}
+  .kv div{display:flex;flex-direction:column;gap:1px;}
+  .kv span:first-child{color:var(--sub);font-size:10.5px;letter-spacing:.02em;}
+  .kv span:last-child{font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums;}
+  .chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .chk i{font-style:normal;font-size:11.5px;padding:3px 7px;border-radius:6px;background:#f6f8fa;color:var(--sub);border:1px solid #eef1f4;}
+  .chk i.y{background:#e6f4f1;color:var(--teal);border-color:#d3eae5;}
+  .chk i.n{background:#fdecec;color:#b3261e;border-color:#f8dcdc;}
+  .chk i.m{background:#fdf3e3;color:var(--amber);border-color:#f6e6c9;}
+
+  .plan th,.plan td{text-align:right;}
+  .plan th:first-child,.plan td:first-child,.plan th:nth-child(2),.plan td:nth-child(2){text-align:left;}
+
+  ul.clean{list-style:none;}
+  ul.clean li{padding:9px 0 9px 26px;position:relative;font-size:14px;border-bottom:1px solid #eef1f4;}
+  ul.clean li:last-child{border-bottom:none;}
+  ul.clean li:before{content:"";position:absolute;left:6px;top:17px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  ul.clean li b{color:var(--up);}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;}
+  .panel h4{font-size:14px;margin-bottom:10px;color:var(--accent);}
+  .panel.warn{border-left:4px solid var(--amber);}
+  .panel.bad{border-left:4px solid var(--up);}
+
+  .foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--sub);line-height:1.8;}
+  .foot b{color:var(--ink);}
+
+  @media (max-width:900px){
+    .cards{grid-template-columns:1fr 1fr;}
+    .stock-grid,.two-col{grid-template-columns:1fr;}
+    .wrap{padding:24px 16px 48px;}
+    h1{font-size:23px;}
+    table{font-size:12.5px;}
+  }
+  .dl{position:fixed;top:18px;right:18px;z-index:99;display:flex;gap:8px;}
+  .dl a{display:inline-block;padding:9px 15px;border-radius:9px;background:#1e3a5f;color:#fff;
+        text-decoration:none;font-size:12.5px;font-weight:600;box-shadow:0 4px 14px rgba(30,58,95,.25);}
+  .dl a.alt{background:#fff;color:#1e3a5f;border:1px solid #d8dee6;box-shadow:0 4px 14px rgba(0,0,0,.06);}
+  @media print{.dl{display:none;}}
+</style>
+</head>
+<body>
+<div class="dl">
+  <a href="screening_20261111.xlsx" download>下载筛选表 .xlsx</a>
+  <a class="alt" href="https://github.com/meilide38/Personal-notes33" target="_blank" rel="noopener">仓库</a>
+</div>
+<div class="wrap">
+
+<header>
+  <div class="kicker">A-SHARE THEME SCREENER · 收盘版</div>
+  <h1>主线选股：<span>今天没有一只票“全达标”</span></h1>
+  <div class="meta">数据基准：<b>2026年11月11日 收盘</b> · 全市场 5,928 只 · 主线成分股 898 只逐票跑均线 / MACD / 量能 / 筹码 · 数据源 akshare（东方财富）</div>
+  <div class="rule-line"></div>
+</header>
+
+<h2><span class="num">1</span>先给结论</h2>
+<p class="lead">按你给的七条“主线”标准 + 八条“个股”铁律逐项打分后的真实结果，不是安慰话。</p>
+
+<div class="verdict">
+  <p><b>今天是反弹第 3 天，不是主线回踩买点。</b> 算力硬件（CPO / 光模块 / PCB）是全场最强、梯队最全、资金最猛的方向，但板块指数仍在 20 日线下方、20 日线还在向下走（斜率 −4% 至 −5.6%）——按你的规则，这属于“板块 K 线下降趋势，只是超跌反弹”，<b>一票否决，不追</b>。</p>
+  <p>唯一“K 线多头、20 日线上翘”的方向是<b>人形机器人</b>，但板块已偏离 20 日线 +7.1%，个股普遍在 +3%～+7% 的“半山腰”，<b>买点还没跌到</b>。</p>
+  <p>所以今天的正确动作是：<b>把 2 只一档票挂好价格等回踩，仓位不超 20%，其余空仓等信号</b>。全文最后一节给了明日 5 个验证点，满足 3 个以上再谈加仓。</p>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="lbl">上证指数</div>
+    <div class="val up">3680.64 <span style="font-size:14px;">+0.46%</span></div>
+    <div class="note">日线 3 连阳 · 站上 3668 生命线</div>
+  </div>
+  <div class="card">
+    <div class="lbl">两市成交额</div>
+    <div class="val">1.68 <span style="font-size:14px;">万亿</span></div>
+    <div class="note">较昨日放量 1,714 亿 · 量价配合</div>
+  </div>
+  <div class="card">
+    <div class="lbl">涨停 / 跌停</div>
+    <div class="val">85 <span style="font-size:14px;color:#5b6b7c;">/ 3</span></div>
+    <div class="note">封板率 82% · 炸板 19 只 · 晋级率 20%</div>
+  </div>
+  <div class="card">
+    <div class="lbl">昨日涨停今日溢价</div>
+    <div class="val up">+2.93%</div>
+    <div class="note">中位 +2.79% · 红盘率 68.8% · 跌超 5% 仅 4.3%</div>
+  </div>
+</div>
+
+<p class="lead" style="margin-top:12px;">环境分 <b style="color:#c62828;">7 / 10</b>：溢价健康、没有“核按钮”，说明不是退潮期，可以挑票；但指数只是今日才刚触到 20 日线（约 3680），且近 20 日仍跌 3.6%，20 日线尚未拐头 —— 不具备“重仓做主线”的土壤。</p>
+
+<h2><span class="num">2</span>主线体检：七条标准逐条过</h2>
+<p class="lead">“板块 K 线”这一条是前置否决项。它不过，后面量能、梯队再漂亮也只能进观察池。</p>
+
+<table class="matrix">
+  <thead>
+    <tr>
+      <th>板块</th><th>今日涨幅</th><th>涨 / 跌家数</th><th>距 20 日线</th><th>20 日线斜率</th><th>今日量能 / 5日均</th><th>七条打分</th><th>判定</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CPO 概念</td><td class="mono up">+5.83%</td><td class="mono">91 : 8</td><td class="mono">0.0%</td><td class="mono down">−5.6%</td><td class="mono">1.19×</td><td>6 / 7</td>
+      <td><span class="tag no">K线否决 · 只观察</span></td>
+    </tr>
+    <tr>
+      <td>光通信模块</td><td class="mono up">+5.33%</td><td class="mono">114 : 9</td><td class="mono">+0.8%</td><td class="mono down">−4.5%</td><td class="mono">1.19×</td><td>6 / 7</td>
+      <td><span class="tag no">K线否决 · 只观察</span></td>
+    </tr>
+    <tr>
+      <td>PCB</td><td class="mono up">+3.58%</td><td class="mono">191 : 21</td><td class="mono">+0.7%</td><td class="mono down">−4.2%</td><td class="mono">1.08×</td><td>6 / 7</td>
+      <td><span class="tag no">K线否决 · 只观察</span></td>
+    </tr>
+    <tr>
+      <td>先进封装</td><td class="mono up">+3.15%</td><td class="mono">99 : 12</td><td class="mono">+2.0%</td><td class="mono down">−3.7%</td><td class="mono">0.89×</td><td>5 / 7</td>
+      <td><span class="tag no">K线 + 量能双否决</span></td>
+    </tr>
+    <tr>
+      <td>存储芯片</td><td class="mono up">+2.94%</td><td class="mono">129 : 13</td><td class="mono">+1.9%</td><td class="mono down">−3.5%</td><td class="mono">0.94×</td><td>5 / 7</td>
+      <td><span class="tag no">K线 + 量能双否决</span></td>
+    </tr>
+    <tr style="background:#fbf7f0;">
+      <td>人形机器人</td><td class="mono up">+2.30%</td><td class="mono">265 : 64</td><td class="mono">+7.1%</td><td class="mono up">+0.7%</td><td class="mono">1.10×</td><td>7 / 7</td>
+      <td><span class="tag mid">唯一趋势成立 · 等回踩</span></td>
+    </tr>
+    <tr>
+      <td>机器人概念</td><td class="mono up">+1.86%</td><td class="mono">613 : 195</td><td class="mono">+4.4%</td><td class="mono down">−0.5%</td><td class="mono">1.08×</td><td>5 / 7</td>
+      <td><span class="tag mid">广度高、成色杂</span></td>
+    </tr>
+    <tr>
+      <td>液冷服务器</td><td class="mono up">+2.29%</td><td class="mono">150 : 38</td><td class="mono">+2.9%</td><td class="mono down">−2.4%</td><td class="mono">1.00×</td><td>4 / 7</td>
+      <td><span class="tag no">未放量</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="two-col" style="margin-top:18px;">
+  <div class="panel">
+    <h4>算力硬件：6/7，差在哪一条？</h4>
+    <ul class="clean">
+      <li><b>催化够硬</b>：高盛把 2027/2028 年 800G 以上光模块需求上修至 1.44 亿 / 1.71 亿只，1.6T 价格维持 700 美元以上；龙头订单已覆盖 2027 全年，部分客户给出 2028 指引；亚马逊 AWS、谷歌云双双上调 2027 资本开支。</li>
+      <li><b>梯队完整</b>：半导体设备 15 只涨停、通信设备 8 只、元件（PCB）5 只，龙头锋龙 3 板、中军东山精密 / 沪电 / 光迅、首板一堆。</li>
+      <li><b>资金真实</b>：电子主力净流入 131.63 亿、通信 128.79 亿，中际旭创单只净买 28.8 亿。</li>
+      <li style="color:#b3261e;"><b style="color:#b3261e;">硬伤</b>：板块指数今天才是第一根放量大阳，仍压在 20 日线下方，20 日线斜率 −5.6%，20 日低点没有抬高 —— 这就是“超跌反弹”，不是“趋势中的回踩”。</li>
+    </ul>
+  </div>
+  <div class="panel warn">
+    <h4>机器人：7/7，差在哪一条？</h4>
+    <ul class="clean">
+      <li><b>催化在持续发酵</b>：特斯拉弗里蒙特已启动 Optimus 大批量产线，2027 年底对外交付、“只租不卖”RaaS 模式，12 月或开放预订；工信部口径全年人形机器人产量有望破 10 万台；首批 6 项国标 2027 年 4 月实施。</li>
+      <li><b>持续性够</b>：10 月中旬启动，近 3 日 +7.9%、近 10 日 +2.9%，不是单日脉冲；昨日涨停今日平均 +2.93%、红盘率 68.8%，没有闷杀。</li>
+      <li><b>梯队完整</b>：光洋股份 3 板（板块空间龙）、福莱新材 2 板（历史新高）、日盈电子 / 华培动力 / 天奇股份 / 亿嘉和接力补涨，中军拓普、三花，龙头宇树。</li>
+      <li style="color:#b45309;"><b style="color:#b45309;">唯一的“不达标”是位置</b>：板块距 20 日线 +7.1%，个股普遍 +3%～+7%，此刻买入=追高，违反你自己写的“绝不追高”。</li>
+    </ul>
+  </div>
+</div>
+
+<h2><span class="num">3</span>候选股：只在“真逻辑 + 技术达标”的交集里选</h2>
+<p class="lead">898 只主线成分股里，同时满足「站上 5/20 日线 + 20 日线上翘 + MACD 零轴上金叉 + 近 5 日缩量回踩 + 市值 30–250 亿」的只有 9 只，全部集中在机器人链。算力链 342 只成分股里，20 日线仍在向上的只有 21 只（6%），而机器人链 499 只里有 137 只（27%）——差了 4 倍，这就是“趋势”和“反弹”的分别。下表是可交易的那几只。</p>
+
+<div class="stock-grid">
+
+  <div class="stock top">
+    <div class="hd">
+      <div>
+        <h3>中科创达<span class="code">300496</span></h3>
+        <div style="font-size:12px;color:#5b6b7c;margin-top:2px;">机器人操作系统 / 端侧 AI · 流通市值 210.6 亿</div>
+      </div>
+      <div class="score"><b>9</b><span>/10</span></div>
+    </div>
+    <p class="why">机器人“软件底座”卡位：智能操作系统 + 端侧 AI 模组，机器人本体厂商做算法落地绕不开 OS 层。逻辑不像丝杠那么直白，但正好是“产业链上下游联动”里的上游软件环节，且不依赖单一客户订单。</p>
+    <div class="kv">
+      <div><span>现价</span><span>57.00</span></div>
+      <div><span>20 日线</span><span>54.90</span></div>
+      <div><span>距买点</span><span style="color:#0f8a5f;">还需 −3.7%</span></div>
+      <div><span>5 日线</span><span>56.38</span></div>
+      <div><span>换手 / 量比</span><span>2.19% / 0.81</span></div>
+      <div><span>获利盘</span><span>53.6%</span></div>
+      <div><span>20 日涨幅</span><span class="up">+10.7%</span></div>
+      <div><span>MACD · 红柱放大</span><span>0.51 / 0.26</span></div>
+    </div>
+    <div class="chk">
+      <i class="y">主线板块</i><i class="y">市值达标</i><i class="y">站上双线</i><i class="y">20日线上翘</i>
+      <i class="n">20日低点未抬高</i><i class="y">回调5日</i><i class="y">缩量</i><i class="y">零轴上金叉</i><i class="y">获利盘53.6%</i><i class="y">无假突破</i>
+    </div>
+  </div>
+
+  <div class="stock top">
+    <div class="hd">
+      <div>
+        <h3>捷昌驱动<span class="code">603583</span></h3>
+        <div style="font-size:12px;color:#5b6b7c;margin-top:2px;">线性执行器 / 关节模组 · 流通市值 109.2 亿</div>
+      </div>
+      <div class="score"><b>8</b><span>/10</span></div>
+    </div>
+    <p class="why">逻辑最“实”的一只：线性执行器基于自研行星滚柱丝杠，推力 150–8000N；空心杯电机总成、旋转模组已从小批量试制跨到规模化量产，2025 年机器人业务工程订单同比 +120%。缺点是三季报利润下滑、获利盘偏高。</p>
+    <div class="kv">
+      <div><span>现价</span><span>28.49</span></div>
+      <div><span>20 日线</span><span>27.59</span></div>
+      <div><span>距买点</span><span style="color:#0f8a5f;">还需 −3.1%</span></div>
+      <div><span>5 日线</span><span>28.23</span></div>
+      <div><span>换手 / 量比</span><span>1.57% / 0.92</span></div>
+      <div><span>获利盘 · 偏高</span><span style="color:#b45309;">83.7%</span></div>
+      <div><span>20 日涨幅</span><span class="up">+8.4%</span></div>
+      <div><span>MACD · 红柱放大</span><span>0.35 / 0.31</span></div>
+    </div>
+    <div class="chk">
+      <i class="y">主线板块</i><i class="y">市值达标</i><i class="y">站上双线</i><i class="y">20日线上翘</i>
+      <i class="n">20日低点未抬高</i><i class="y">回调5日</i><i class="y">缩量</i><i class="y">零轴上金叉</i><i class="n">获利盘83.7%</i><i class="y">无假突破</i>
+    </div>
+  </div>
+
+  <div class="stock">
+    <div class="hd">
+      <div>
+        <h3>恒锋工具<span class="code">300488</span></h3>
+        <div style="font-size:12px;color:#5b6b7c;margin-top:2px;">精密刀具 · 丝杠加工“卖铲子” · 流通市值 60.5 亿</div>
+      </div>
+      <div class="score"><b>6</b><span>/10</span></div>
+    </div>
+    <p class="why">行星滚柱丝杠放量 → 螺纹 / 滚丝刀具需求先起，属于产业链最上游。缺点明显：MACD 红柱已连续缩短、突破日上影线 4%、换手 6.13% 超过 5% 上限，只能轻仓。</p>
+    <div class="kv">
+      <div><span>现价</span><span>37.29</span></div>
+      <div><span>20 日线</span><span>34.93</span></div>
+      <div><span>距买点</span><span style="color:#0f8a5f;">还需 −6.3%</span></div>
+      <div><span>5 日线</span><span>36.91</span></div>
+      <div><span>换手 / 量比</span><span>3.38% / 0.68</span></div>
+      <div><span>获利盘 · 偏高</span><span style="color:#b45309;">79.7%</span></div>
+      <div><span>20 日涨幅</span><span class="up">+17.1%</span></div>
+      <div><span>MACD · 红柱缩短</span><span style="color:#b45309;">0.77 / 0.49</span></div>
+    </div>
+    <div class="chk">
+      <i class="y">主线板块</i><i class="y">市值达标</i><i class="y">站上双线</i><i class="y">20日线上翘</i>
+      <i class="n">20日低点未抬高</i><i class="y">回调5日</i><i class="y">缩量</i><i class="n">红柱缩短</i><i class="n">获利盘79.7%</i><i class="m">突破日上影4%</i>
+    </div>
+  </div>
+
+  <div class="stock">
+    <div class="hd">
+      <div>
+        <h3>博众精工<span class="code">688097</span></h3>
+        <div style="font-size:12px;color:#5b6b7c;margin-top:2px;">光模块 / CPO 组装设备 + 机器人自动化 · 流通市值 221.1 亿</div>
+      </div>
+      <div class="score"><b>8</b><span>/10</span></div>
+    </div>
+    <p class="why">同时沾“算力设备”和“机器人自动化”两条线，CPO 交换机 2026→2028 出货从 1 万台到 13.1 万台，设备端是最早兑现收入的环节。技术面全过，但距 20 日线 +9.5%，只能等。</p>
+    <div class="kv">
+      <div><span>现价</span><span>49.43</span></div>
+      <div><span>20 日线</span><span>45.15</span></div>
+      <div><span>距买点</span><span style="color:#0f8a5f;">还需 −8.7%</span></div>
+      <div><span>5 日线</span><span>47.43</span></div>
+      <div><span>换手 / 量比</span><span>1.93% / 0.81</span></div>
+      <div><span>获利盘 · 未取到</span><span>—</span></div>
+      <div><span>20 日涨幅</span><span class="up">+22.9%</span></div>
+      <div><span>MACD · 红柱放大</span><span>1.14 / 0.67</span></div>
+    </div>
+    <div class="chk">
+      <i class="y">主线板块</i><i class="y">市值达标</i><i class="y">站上双线</i><i class="y">20日线上翘</i>
+      <i class="y">20日低点抬高</i><i class="y">回调5日</i><i class="y">缩量</i><i class="y">零轴上金叉</i><i class="m">筹码待查</i><i class="y">无假突破</i>
+    </div>
+  </div>
+
+</div>
+
+<h2><span class="num">4</span>交易计划：把“等”变成具体价格</h2>
+<p class="lead">买点 = 20 日线 ±1% 且当日缩量（量比 &lt; 1）、分时承接不破；止损 = 收盘价跌破 20 日线，无条件走。以下价位按 11-11 收盘计算，明日随 20 日线上移微调。</p>
+
+<table class="plan">
+  <thead>
+    <tr><th>标的</th><th>买点区间（回踩 20 日线）</th><th>止损（收盘破）</th><th>首目标（前高）</th><th>距买点</th><th>建议仓位</th><th>动作</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="name">中科创达 <span class="code">300496</span></td>
+      <td class="mono">54.35 – 55.45</td><td class="mono down">54.08</td><td class="mono">59.68</td><td class="mono">−3.7%</td><td class="mono">10%</td>
+      <td><span class="tag buy">挂单等回踩</span></td>
+    </tr>
+    <tr>
+      <td class="name">捷昌驱动 <span class="code">603583</span></td>
+      <td class="mono">27.31 – 27.86</td><td class="mono down">27.17</td><td class="mono">30.06</td><td class="mono">−3.1%</td><td class="mono">10%</td>
+      <td><span class="tag buy">挂单等回踩</span></td>
+    </tr>
+    <tr>
+      <td class="name">博众精工 <span class="code">688097</span></td>
+      <td class="mono">44.70 – 45.60</td><td class="mono down">44.48</td><td class="mono">51.18</td><td class="mono">−8.7%</td><td class="mono">0</td>
+      <td><span class="tag wait">观察，不挂单</span></td>
+    </tr>
+    <tr>
+      <td class="name">恒锋工具 <span class="code">300488</span></td>
+      <td class="mono">34.58 – 35.28</td><td class="mono down">34.40</td><td class="mono">39.28</td><td class="mono">−6.3%</td><td class="mono">0</td>
+      <td><span class="tag wait">等红柱重新放大</span></td>
+    </tr>
+    <tr>
+      <td class="name">光洋股份 <span class="code">002708</span></td>
+      <td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="mono">+45.9% 偏离</td><td class="mono">0</td>
+      <td><span class="tag wait">只做情绪风向标</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="lead" style="margin-top:12px;">仓位逻辑：板块指数尚未站上 20 日线 → 属于“条件不达标”，按你的纪律只能<b>轻仓试错</b>。两只一档票合计不超过 20%，单票不超过 10%；等板块指数收复 20 日线并回踩不破，才允许按 40% 单票上限加。</p>
+
+<h2><span class="num">5</span>被剔除的票，以及为什么</h2>
+<p class="lead">筛掉的比留下的更有信息量——很多“看起来在涨”的票，其实踩了你的否决项。</p>
+
+<div class="two-col">
+  <div class="panel bad">
+    <h4>技术面否决</h4>
+    <ul class="clean">
+      <li><b>绝大多数算力硬件个股</b>：CPO / 光模块 / PCB / 存储 / 先进封装 342 只成分股，20 日线还在向上的只有 <b>21 只（6%）</b>，94% 仍是下跌趋势。板块在反弹，个股没转势，追进去等于接反弹的最后一棒。</li>
+      <li><b>泛亚微透 688386</b>：距 20 日线 +33%、20 日 +67%，已在加速段末端，追进去就是接最后一棒。</li>
+      <li><b>闽发铝业 002578</b>：7 连板断板，换手 34.5%，高位放量分歧，典型“接力末端”。</li>
+      <li><b>天元智能 603273</b>：获利盘 96%，上方几乎没有套牢盘但也意味着全是浮盈，一有风吹草动就是踩踏。</li>
+    </ul>
+  </div>
+  <div class="panel warn">
+    <h4>逻辑面否决（挂靠概念）</h4>
+    <ul class="clean">
+      <li><b>龙旗科技 603341</b>：手机 ODM，机器人无实质业务，属于“概念板块成分股”而非产业链。</li>
+      <li><b>重庆建工 / 振华重工 / 中南文化 / 山东矿机</b>：与机器人主线只有极弱的业务交集，是“板块成员数”而不是“板块逻辑”。</li>
+      <li><b>南山智尚 300918</b>：UHMWPE 腱绳逻辑真实（已送样、有小批量订单），但公司明确“尚未形成规模化收益”，且量比 1.16 未缩量、突破仅 1 天，<b>降级为观察</b>。</li>
+    </ul>
+  </div>
+</div>
+
+<h2><span class="num">6</span>明日（11-12）只看这 5 件事</h2>
+<div class="panel">
+  <ul class="clean">
+    <li><b>① 板块指数能否收复 20 日线</b>：CPO 6626 / 光通信 3080 / PCB 3355，这三个数字站上去且不回落，算力硬件才从“反弹”升级为“趋势”，才允许把仓位从 0 提到 10–20%。</li>
+    <li><b>② 人形机器人能否缩量回踩不破 20 日线</b>：板块 20 日线约 1556，回踩到 1600 附近缩量、个股不破线，才是真正的低吸点。</li>
+    <li><b>③ 光洋股份 4 板能否封住</b>：它是机器人链的空间标杆，一旦放量炸板且次日核按钮，整条链降级。</li>
+    <li><b>④ 昨日涨停溢价是否延续</b>：今日 +2.93%、红盘率 68.8% 是健康值；若明日跌到 0 附近、跌超 5% 占比超 15%，说明进入退潮，停止一切买入。</li>
+    <li><b>⑤ 成交额能否守住 1.6 万亿</b>：1.68 万亿是这波反弹的量能底线，缩回 1.4 万亿以下，突破全部作废。</li>
+  </ul>
+</div>
+
+<h2><span class="num">7</span>纪律复述（你自己写的，别在盘中改）</h2>
+<div class="two-col">
+  <div class="panel">
+    <h4>买入</h4>
+    <ul class="clean">
+      <li>只在<b>回踩 20 日线、分时承接企稳</b>时低吸，绝不追高。</li>
+      <li>单票上限 40%，但<b>板块未站上 20 日线前，上限压到 10%</b>。</li>
+      <li>缺任意一条只轻仓试错；条件不达标，空仓等待。</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h4>卖出</h4>
+    <ul class="clean">
+      <li>收盘跌破 20 日线 → <b>无条件离场</b>，不加仓、不格局。</li>
+      <li>沿 5 日线持股，跌破分批减仓。</li>
+      <li>连续 2 天收不回 5 日线 → 全部清仓。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="foot">
+  <p><b>数据说明：</b>行情、涨停池、板块指数、筹码分布取自 akshare（东方财富 / 同花顺公开接口），基准日为 2026-11-11 收盘。均线、MACD（12/26/9）、量比、获利盘均为脚本按前复权日线计算，与券商软件可能存在小数点级差异。涨停归属、封板率、晋级率引自当日公开复盘数据。</p>
+  <p><b>未覆盖项：</b>减持 / 解禁 / 问询函 / 业绩暴雷等事件需在交易前自查交易所公告，本文仅完成技术面与板块逻辑筛选。获利盘数据对 300918、603194 未取到，已标注。</p>
+  <p><b>风险提示：</b>本文为量化条件筛选与复盘记录，<b>不构成任何投资建议</b>。所有价位为条件触发价，不是预测价。市场有风险，决策请独立完成，盈亏自负。</p>
+</div>
+
+</div>
+</body>
+</html>
