@@ -1,5 +1,7 @@
 # A股主线选股 · 每日复盘
 
+[![Deploy](https://github.com/meilide38/Personal-notes33/actions/workflows/deploy.yml/badge.svg)](https://github.com/meilide38/Personal-notes33/actions/workflows/deploy.yml)
+
 > 严格按「主线七条 + 个股八条」纪律筛选，不达标就空仓。
 
 **站点：<https://meilide38.github.io/Personal-notes33/>**
